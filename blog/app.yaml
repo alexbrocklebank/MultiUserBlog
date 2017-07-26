@@ -1,0 +1,21 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /
+  static_files: templates/*.html
+  upload: templates/*.html
+  expiration: "15m"
+
+- url: /.*
+  script: blog.app
+
+- url: /*
+  script: blog.app
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest

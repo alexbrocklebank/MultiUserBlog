@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>/tiny blog/</title>
+    <style type="text/css">
+      body {
+        font-family: sans-serif;
+        width: 800px;
+        margin: 0 auto;
+        padding: 10px;
+      }
+      hr {
+        margin: 20px auto;
+      }
+      hr:last-of-type {
+        visibility: hidden;
+      }
+      .article + .article {
+        margin-top: 20px;
+      }
+      .article-title {
+        font-weight: bold;
+        font-size: 20px;
+      }
+      .article-body {
+        margin: 0px;
+        font-size: 17px;
+      }
+      a {
+        text-decoration: none;
+      }
+      a::before, a::after {
+        content: "/"
+      }
+      a:hover::after, a:hover::before {
+        content: "\\"
+      }
+    </style>
+  </head>
+  <body>
+    <h1>/tiny blog/</h1>
+
+    {% if user %}
+    <h3>Welcome, {{ user.name }}!</h3>
+    <h4><a href="/blog/newpost">add new post</a></h4>
+    {% else %}
+    <h3>Welcome!</h3>
+    {% endif %}
+
+    {% for article in articles %}
+    <div class="article">
+      <div class="article-title">
+        <a href="/blog/posts/{{ article.key().id() }}/">{{ article.title }}</a>
+      </div>
+      <div class="article-body">
+        <pre>{{ article.article }}</pre>
+      </div>
+      <h4>{{ article.created }}</h4>
+    </div>
+    <hr>
+    {% endfor %}
+  </body>
+</html>

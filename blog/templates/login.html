@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>/tiny blog/ : /signup/</title>
+  </head>
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+      width: 800px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+    hr {
+      margin: 20px auto;
+    }
+    hr:last-of-type {
+      visibility: hidden;
+    }
+    .article + .article {
+      margin-top: 20px;
+    }
+    .article-title {
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .article-body {
+      margin: 0px;
+      font-size: 17px;
+    }
+    .error {
+      color: red;
+    }
+    label {
+      display: block;
+      font-size: 20px;
+    }
+    input[type=text] {
+      width: 400px;
+      font-size: 20px;
+      padding: 2px;
+    }
+    textarea {
+      width: 400px;
+      height: 600px;
+      font-size: 17px;
+      /*font-family: monospace;*/
+    }
+    input[type=submit] {
+      font-size: 24px;
+    }
+    a {
+      text-decoration: none;
+    }
+    a::before, a::after {
+      content: "/"
+    }
+    a:hover::after, a:hover::before {
+      content: "\\"
+    }
+  </style>
+  <body>
+    <h1>/tiny blog/</h1>
+    <h4>login</h4>
+
+    <form method="post">
+      <label>
+        <div>username</div>
+        <input type="text" name="username" value="{{ username }}">
+      </label>
+      <label>
+        <div>password</div>
+        <input type="text" name="password" value="{{ password }}">
+      </label>
+      <div class="error">
+        <pre>{{ error }}</pre>
+      </div>
+      <input type="submit" value="submit">
+    </form>
+  </body>
+</html>
