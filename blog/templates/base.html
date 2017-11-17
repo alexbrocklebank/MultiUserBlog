@@ -1,12 +1,19 @@
-{% extends "base.html" %}
-{% block title %}/tiny blog/{% endblock title %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}/tiny blog/{% endblock %}</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    {% include 'header.html' %}
+    {% block content %}
     {% if user %}
     <h3>Welcome, {{ user.name }}!</h3>
     <h4><a href="/blog/newpost">add new post</a></h4>
     {% else %}
     <h3>Welcome!</h3>
     {% endif %}
+    <!-- Need a Login button, among other things... -->
 
     {% for article in articles %}
     <div class="article">
@@ -20,4 +27,6 @@
     </div>
     <hr>
     {% endfor %}
-{% endblock content %}
+    {% endblock content %}
+  </body>
+</html>

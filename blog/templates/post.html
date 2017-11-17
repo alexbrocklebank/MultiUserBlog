@@ -1,44 +1,6 @@
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <title>/tiny blog/</title>
-    <style type="text/css">
-      body {
-        font-family: sans-serif;
-        width: 800px;
-        margin: 0 auto;
-        padding: 10px;
-      }
-      hr {
-        margin: 20px auto;
-      }
-      hr:last-of-type {
-        visibility: hidden;
-      }
-      .article + .article {
-        margin-top: 20px;
-      }
-      .article-title {
-        font-weight: bold;
-        font-size: 20px;
-      }
-      .article-body {
-        margin: 0px;
-        font-size: 17px;
-      }
-      a {
-        text-decoration: none;
-      }
-      a::before, a::after {
-        content: "/"
-      }
-      a:hover::after, a:hover::before {
-        content: "\\"
-      }
-    </style>
-  </head>
-  <body>
+{% extends "base.html" %}
+{% block title %}/tiny blog/{% endblock title %}
+{% block content %}
     <h1><a href="/blog">tiny blog</a>: /post/</h1>
     <h4><a href="/blog/newpost">add new post</a></h4>
 
@@ -51,5 +13,4 @@
       permalink: <a href="/blog/posts/{{ id }}/">{{ id }}</a>
     </div>
     <hr>
-  </body>
-</html>
+{% endblock content %}
