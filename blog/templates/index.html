@@ -2,16 +2,16 @@
 {% block title %}/tiny blog/{% endblock title %}
 {% block content %}
     {% if user %}
-    <h3>Welcome, {{ user.name }}!</h3>
+    <h3>Hello, {{ user.name }}!</h3>
     <h4><a href="/blog/newpost">add new post</a></h4>
     {% else %}
-    <h3>Welcome!</h3>
+    <h3>Hello! please <a href="/blog/login">sign-in</a> or <a href="/blog/signup">sign-up</a></h3>
     {% endif %}
 
     {% for article in articles %}
     <div class="article">
       <div class="article-title">
-        <a href="/blog/posts/{{ article.key().id() }}/">{{ article.title }}</a>
+        <a href="/blog/posts/{{ article.key().id() }}">{{ article.title }}</a>
       </div>
       <div class="article-body">
         <pre>{{ article.article }}</pre>

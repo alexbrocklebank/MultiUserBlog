@@ -1,16 +1,52 @@
 {% extends "base.html" %}
 {% block title %}/tiny blog/{% endblock title %}
-{% block content %}
-    <h1><a href="/blog">tiny blog</a>: /post/</h1>
+{% block pagetitle %}tiny blog: /post/{% endblock pagetitle %}
+    {% block content %}
     <h4><a href="/blog/newpost">add new post</a></h4>
 
     <div class="article">
-      <div class="article-title">{{ title }}</div>
+      <div class="article-title">{{ title }}
+          {% if user.name == creator %}
+            <a href="/blog/posts/{{ id }}/edit">(edit)</a>
+          {% endif %}</div>
       <h4>{{ created }}</h4>
+
       <div class="article-body">
         <pre>{{ article }}</pre>
       </div>
-      permalink: <a href="/blog/posts/{{ id }}/">{{ id }}</a>
+      <div>
+          <button type="button" class="btn btn-default btn-md">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+              <a href="/blog/posts/{{ id }}/like">Likes: {{ likes }}</a>
+          </button>
+
+          {% if user and user.name != creator %}
+          <!--<a href="/blog/posts/{{ id }}/like">(like)</a>-->
+
+          {% endif %}
+      permalink: <a href="/blog/posts/{{ id }}">{{ id }}</a>
     </div>
     <hr>
+    Comments:
+    {% if user %}
+    <form method="post">
+        leave a comment:
+      <label>
+        <div>text</div>
+        <textarea name="content" rows="7">{{ new_comment_text }}</textarea>
+      </label>
+      <input type="submit" value="submit">
+    </form>
+    {% endif %}
+
+    {% for comment in comments %}
+    <div class="comment">
+      <div class="comment-body">
+        {{ comment.creator }} says:
+        <pre>{{ comment.content }}</pre>
+      </div>
+      <h4>{{ comment.created }}</h4>
+    </div>
+    <hr>
+    {% endfor %}
 {% endblock content %}

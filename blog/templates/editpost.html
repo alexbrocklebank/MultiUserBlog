@@ -1,15 +1,16 @@
 {% extends "base.html" %}
-{% block title %}/tiny blog/ : /sign in/{% endblock title %}
-{% block pagetitle %}login{% endblock pagetitle %}
+{% block title %}/tiny blog/ : /add new/{% endblock title %}
+{% block pagetitle %}tiny blog : /edit post/{% endblock pagetitle %}
     {% block content %}
+
     <form method="post">
       <label>
-        <div>username</div>
-        <input type="text" name="username" value="{{ username }}">
+        <div>title</div>
+        <input type="text" name="subject" value="{{ title }}">
       </label>
       <label>
-        <div>password</div>
-        <input type="text" name="password" value="{{ password }}">
+        <div>article</div>
+        <textarea name="content">{{ article }}</textarea>
       </label>
       <div class="error">
         {% if error %}
@@ -21,5 +22,7 @@
         {% endif %}
       </div>
       <input type="submit" value="submit">
+      <a href="/blog/posts/{{ postid }}">cancel</a>
+      <a href="/blog/posts/{{ postid }}/delete">delete</a>
     </form>
 {% endblock content %}

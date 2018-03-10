@@ -8,12 +8,14 @@ import webapp2
 import jinja2
 from google.appengine.ext import db
 
-# Secret should be hidden in an external unpublished module
+# TODO: Secret should be hidden in an external unpublished module
 SECRET = 'ljwnehgf.,8734tnfyu7wa3Y^*^&^T#%@#(*&^a4H76R6R[]/6595GFYUJG*^%(G$)'
 
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
+#template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+#jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
+#                               autoescape=True)
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'),
                                autoescape=True)
 
 
@@ -118,6 +120,10 @@ class User(db.Model):
         if u and valid_pw(name, pw, u.pw_hash):
             return u
 
+
+def articles_key(group='default'):
+    return db.Key.from_path('articles', group)
+
 class Article(db.Model):
     # Datastore Types:
     # Integer, Float, String, Date, Time, DateTime,
@@ -126,6 +132,37 @@ class Article(db.Model):
     # Text is > 500 chars and non-indexable
     title = db.StringProperty(required=True)
     article = db.TextProperty(required=True)
+    creator = db.StringProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+
+    @classmethod
+    def by_id(cls, aid):
+        return Article.get_by_id(aid, parent=articles_key())
+
+    @classmethod
+    def by_title(cls, title):
+        return Article.all().filter('title = ', title).get()
+
+
+def comments_key(group='default'):
+    return db.Key.from_path('comments', group)
+
+class Comment(db.Model):
+    article = db.IntegerProperty(required=True)
+    content = db.TextProperty(required=True)
+    creator = db.StringProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+
+
+def likes_key(group='default'):
+    return db.Key.from_path('likes', group)
+
+class Like(db.Model):
+    by_user = db.StringProperty(required=True)
+    liked_user = db.StringProperty(required=True)
+    article = db.IntegerProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
 
@@ -148,41 +185,181 @@ class NewPost(Handler):
         self.render("newpost.html", title=title, article=article, error=error)
 
     def get(self):
-        # TODO: Check for username exists
-        self.render_new()
+        userid = self.read_secure_cookie('user_id')
+        user = False
+
+        if userid:
+            userid = int(userid)
+            user = User.by_id(userid)
+
+        if user:
+            self.render_new()
+        else:
+            self.redirect('/blog/logout')
 
     def post(self):
         title = self.request.get("subject")
         article = self.request.get("content")
-        # TODO: User check
+        userid = self.read_secure_cookie('user_id')
+        userid = int(userid)
+        user = User.by_id(userid)
+        creator = ""
+        if user:
+            creator = user.name
+        else:
+            error = "Creator not found!\n"
+            self.render_new(title, article, error)
 
-        if title and article:
+        if title and article and creator:
             # article = article.replace('\n', '<br>')
-            a = Article(title=title, article=article)
+            a = Article(parent=articles_key(), title=title, article=article, creator=creator)
             # TODO: Insert proper paragraphs?
             a.put()
             postid = a.key().id()
-            self.redirect("/blog/posts/{}/".format(postid))
+            self.redirect("/blog/posts/{}".format(str(postid)))
         else:
             error = "You must include both a Title and an Article!\n"
             self.render_new(title, article, error)
 
 
 class ViewPost(Handler):
-    def render_post(self, postid, title="", article="", created=""):
-        post = Article.get_by_id(int(postid))
-        # key = db.Key.from_path('Article', int(post_id), parent=blog_key())
-        # post = db.get(key)
-        if not post:
-            self.error(404)
-            # TODO: make a 404
-            return
-
-        self.render("post.html", title=post.title, article=post.article,
-                    created=post.created, id=postid)
+    def render_post(self, postid, user="", post="", content="", error=""):
+        comments = db.GqlQuery("SELECT * FROM Comment WHERE article={}"
+                               " ORDER BY created ASC;".format(postid))
+        likes = db.GqlQuery("SELECT * FROM Like WHERE article={}"
+                            " ORDER BY created ASC;".format(postid))
+        count = likes.count()
+        self.render("post.html", user=user, title=post.title,
+                article=post.article, created=post.created,
+                creator=post.creator, id=postid, likes=count,
+                comments=comments)
 
     def get(self, postid):
-        self.render_post(postid)
+        key = db.Key.from_path('Article', int(postid), parent=articles_key())
+        post = db.get(key)
+        userid = self.read_secure_cookie('user_id')
+        user = False
+        if post:
+            if userid:
+                userid = int(userid)
+                user = User.by_id(userid)
+
+            self.render_post(postid=postid, user=user, post=post,
+                             content="", error="")
+        else:
+            self.error(404)
+        #self.render_post(postid)
+
+    def post(self, postid):
+        content = self.request.get("content")
+        key = db.Key.from_path('Article', int(postid), parent=articles_key())
+        post = db.get(key)
+        userid = self.read_secure_cookie('user_id')
+        user = False
+        error = ""
+
+        if userid:
+            userid = int(userid)
+            user = User.by_id(userid)
+        else:
+            error += "User does not exist!\n"
+
+        if not post:
+            error += "Parent post does not exist!\n"
+
+        if content and user:
+            comment = Comment(parent=comments_key(), article=int(postid),
+                              content=content, creator=user.name)
+            comment.put()
+        else:
+            error += "You must type a comment body!\n"
+
+        self.render_post(postid=postid, user=user, post=post,
+                         content=content, error=error)
+
+
+class EditPost(Handler):
+    def render_edit(self, postid, title="", article="", error=""):
+        self.render("editpost.html", postid=postid, title=title,
+                    article=article, error=error)
+
+    def get(self, postid):
+        userid = self.read_secure_cookie('user_id')
+        user = False
+        key = db.Key.from_path('Article', int(postid), parent=articles_key())
+        post = db.get(key)
+
+        if userid:
+            userid = int(userid)
+            user = User.by_id(userid)
+
+        if user and post:
+            self.render_edit(postid=postid, title=post.title,
+                             article=post.article, error="")
+        else:
+            self.redirect("/blog/posts/{}".format(str(postid)))
+
+    def post(self, postid):
+        key = db.Key.from_path('Article', int(postid), parent=articles_key())
+        post = db.get(key)
+        title = self.request.get("subject")
+        article = self.request.get("content")
+
+        if title and article:
+            # article = article.replace('\n', '<br>')
+            post.title = title
+            post.article = article
+            # TODO: Insert proper paragraphs?
+            post.put()
+            self.redirect("/blog/posts/{}".format(str(postid)))
+        else:
+            error = "You must include both a Title and an Article!\n"
+            self.render_edit(postid=postid, title=title,
+                             article=article, error=error)
+
+
+class DeletePost(Handler):
+    def get(self, postid):
+        self.render("deletepost.html")
+
+    def post(self, postid):
+        delete = self.request.get("delete")
+        if delete == "yes":
+            key = db.Key.from_path('Article', int(postid), parent=articles_key())
+            post = db.get(key)
+            post.delete()
+            self.render('deletesuccess.html')
+        else:
+            self.redirect("/blog/posts/{}/edit".format(str(postid)))
+
+
+class LikePost(Handler):
+    def get(self, postid):
+        key = db.Key.from_path('Article', int(postid), parent=articles_key())
+        post = db.get(key)
+        userid = self.read_secure_cookie('user_id')
+        user = False
+        if userid:
+            userid = int(userid)
+            user = User.by_id(userid)
+
+        if user and post:
+            if user.name != post.creator:
+                likes = db.GqlQuery("SELECT * FROM Like WHERE article={} and"
+                                    " by_user='{}' ORDER BY created ASC"
+                                    ";".format(postid, user.name))
+                count = likes.count()
+                if count < 1:
+                    like = Like(parent=likes_key(), by_user=user.name,
+                            liked_user=post.creator, article=int(postid))
+                    like.put()
+                    self.render('likesuccess.html', postid=postid, success=True)
+                else:
+                    self.render('likesuccess.html', postid=postid, success=False)
+            else:
+                self.redirect("/blog/posts/{}".format(str(postid)))
+        else:
+            self.redirect("/blog/posts/{}".format(str(postid)))
 
 
 class Signup(Handler):
@@ -215,11 +392,6 @@ class Signup(Handler):
         # No Errors! Move on.
         if params['error'] == "":
             self.done()
-            # article = article.content.replace('\n', '<br>')
-            # a = Article(title = title, article = article)
-            # TODO: Database for Users
-            # a.put()
-            # postid = a.key().id()
         # Uh Oh! Errors! Re-render page with instructions.
         else:
             self.render_signup(**params)
@@ -266,7 +438,7 @@ class Login(Handler):
 class Logout(Handler):
     def get(self):
         self.logout()
-        self.redirect('/blog/signup')
+        self.redirect('/blog/welcome')
 
 
 class Welcome(Handler):
@@ -283,6 +455,9 @@ app = webapp2.WSGIApplication([('/blog', MainPage),
                                ('/blog/login', Login),
                                ('/blog/logout', Logout),
                                ('/blog/welcome', Welcome),
-                               ('/blog/posts/<postid>/', ViewPost)
+                               ('/blog/posts/([0-9]+)', ViewPost),
+                               ('/blog/posts/([0-9]+)/edit', EditPost),
+                               ('/blog/posts/([0-9]+)/delete', DeletePost),
+                               ('/blog/posts/([0-9]+)/like', LikePost)
                                ],
                               debug=True)

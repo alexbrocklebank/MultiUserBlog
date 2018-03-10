@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}/tiny blog/ : /signup/{% endblock title %}
-{% block content %}
-    <h1>/tiny blog/</h1>
+{% block pagetitle %}/tiny blog/{% endblock pagetitle %}
+    {% block content %}
     <h4>signup</h4>
 
     <form method="post">
@@ -22,7 +22,13 @@
         <input type="text" name="email" value="{{ email }}">
       </label>
       <div class="error">
-        <pre>{{ error }}</pre>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            {{ error }}
+        </div>
+        {% endif %}
       </div>
       <input type="submit" value="submit">
     </form>
