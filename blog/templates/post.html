@@ -4,49 +4,65 @@
     {% block content %}
     <h4><a href="/blog/newpost">add new post</a></h4>
 
-    <div class="article">
-      <div class="article-title">{{ title }}
+    <div class="panel panel-default article">
+      <div class="panel-heading article-title">{{ title }}
           {% if user.name == creator %}
             <a href="/blog/posts/{{ id }}/edit">(edit)</a>
-          {% endif %}</div>
-      <h4>{{ created }}</h4>
+          {% endif %}
+      </div>
+      <p class="small">{{ created }}</p>
 
-      <div class="article-body">
-        <pre>{{ article }}</pre>
+      <div class="panel-body article-body">
+        <article>{{ article }}</article>
       </div>
       <div>
-          <button type="button" class="btn btn-default btn-md">
-              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-              <a href="/blog/posts/{{ id }}/like">Likes: {{ likes }}</a>
-          </button>
-
           {% if user and user.name != creator %}
-          <!--<a href="/blog/posts/{{ id }}/like">(like)</a>-->
+          <a href="/blog/posts/{{ id }}/like">
+          <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+          Likes: <span class="badge">{{ likes }}</span></a>
+
+          {% else %}
+          <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+          Likes: <span class="badge">{{ likes }}</span>
 
           {% endif %}
-      permalink: <a href="/blog/posts/{{ id }}">{{ id }}</a>
-    </div>
-    <hr>
-    Comments:
-    {% if user %}
-    <form method="post">
-        leave a comment:
-      <label>
-        <div>text</div>
-        <textarea name="content" rows="7">{{ new_comment_text }}</textarea>
-      </label>
-      <input type="submit" value="submit">
-    </form>
-    {% endif %}
-
-    {% for comment in comments %}
-    <div class="comment">
-      <div class="comment-body">
-        {{ comment.creator }} says:
-        <pre>{{ comment.content }}</pre>
+          permalink: <a href="/blog/posts/{{ id }}">{{ id }}</a>
       </div>
-      <h4>{{ comment.created }}</h4>
+  </div>
+  <hr />
+  <div class="panel panel-default">
+      <div class="panel-heading">
+          Comments:
+      </div>
+      <div class="panel-body">
+          {% if user %}
+          <form method="post">
+            leave a comment:
+            <label>
+                <div>text</div>
+                <textarea name="content" rows="4" class="form-control">{{ new_comment_text }}</textarea>
+            </label>
+            <input class="btn btn-default" type="submit" value="submit">
+          </form>
+          <br />
+          {% else %}
+          <div class="alert alert-warning" role="alert">
+              You must <a href="/blog/login">log in</a> to leave a comment.
+          </div>
+          <br />
+          {% endif %}
+      </div>
+    {% for comment in comments %}
+    <div class="panel panel-default comment">
+      <div class="panel-heading comment-body">
+        {{ comment.creator }} says:
+      </div>
+      <div class="panel-body comment-body">
+          <p>{{ comment.content }}</p>
+          <p class="text-right small">{{ comment.created }}</p>
+      </div>
     </div>
     <hr>
     {% endfor %}
+    </div>
 {% endblock content %}

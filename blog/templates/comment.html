@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block meta %}<meta http-equiv="refresh" content="5;url='/blog/posts/{{ postid }}'">{% endblock meta %}
+{% block title %}/tiny blog/{% endblock title %}
+{% block pagetitle %}tiny blog: /like post/{% endblock pagetitle %}
+    {% block content %}
+
+    {% if success %}
+    <h3>Comment successfully added.  Redirecting back to post...</h3>
+    {% else %}
+    <h3>Comment failed to post...</h3>
+    {% endif %}
+
+    <hr>
+{% endblock content %}

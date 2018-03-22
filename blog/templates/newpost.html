@@ -5,11 +5,11 @@
     <form method="post">
       <label>
         <div>title</div>
-        <input type="text" name="subject" value="{{ title }}">
+        <input class="form-control" type="text" name="subject" value="{{ title }}">
       </label>
       <label>
         <div>article</div>
-        <textarea name="content">{{ article }}</textarea>
+        <textarea name="content" class="form-control">{{ article }}</textarea>
       </label>
       <div class="error">
         {% if error %}

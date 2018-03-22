@@ -7,19 +7,19 @@
     <form method="post">
       <label>
         <div>username</div>
-        <input type="text" name="username" value="{{ username }}">
+        <input class="form-control" type="text" name="username" value="{{ username }}">
       </label>
       <label>
         <div>password</div>
-        <input type="text" name="password" value="{{ password }}">
+        <input class="form-control" type="password" name="password" value="{{ password }}">
       </label>
       <label>
         <div>verify</div>
-        <input type="text" name="verify" value="{{ verify }}">
+        <input class="form-control" type="password" name="verify" value="{{ verify }}">
       </label>
       <label>
         <div>email</div>
-        <input type="text" name="email" value="{{ email }}">
+        <input class="form-control" type="text" name="email" value="{{ email }}">
       </label>
       <div class="error">
         {% if error %}
@@ -30,6 +30,6 @@
         </div>
         {% endif %}
       </div>
-      <input type="submit" value="submit">
+      <input class="btn btn-default" type="submit" value="submit">
     </form>
 {% endblock content %}

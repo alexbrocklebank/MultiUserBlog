@@ -271,6 +271,7 @@ class ViewPost(Handler):
             comment = Comment(parent=comments_key(), article=int(postid),
                               content=content, creator=user.name)
             comment.put()
+            self.redirect("/blog/posts/{}/comment".format(str(postid)))
         else:
             error += "You must type a comment body!\n"
 
@@ -362,6 +363,11 @@ class LikePost(Handler):
             self.redirect("/blog/posts/{}".format(str(postid)))
 
 
+class CommentPost(Handler):
+    def get(self, postid):
+        self.render('comment.html', postid=postid, success=True)
+
+
 class Signup(Handler):
     def render_signup(self, username="", password="", verify="", email="",
                       error=""):
@@ -444,7 +450,9 @@ class Logout(Handler):
 class Welcome(Handler):
     def get(self):
         if self.user:
-            self.render('welcome.html', username=self.user.name)
+            articles = db.GqlQuery("SELECT * FROM Article ORDER BY created DESC"
+                                   " LIMIT 10;")
+            self.render('welcome.html', username=self.user.name, articles=articles)
         else:
             self.redirect('/blog/signup')
 
@@ -458,6 +466,7 @@ app = webapp2.WSGIApplication([('/blog', MainPage),
                                ('/blog/posts/([0-9]+)', ViewPost),
                                ('/blog/posts/([0-9]+)/edit', EditPost),
                                ('/blog/posts/([0-9]+)/delete', DeletePost),
-                               ('/blog/posts/([0-9]+)/like', LikePost)
+                               ('/blog/posts/([0-9]+)/like', LikePost),
+                               ('/blog/posts/([0-9]+)/comment', CommentPost)
                                ],
                               debug=True)

@@ -4,21 +4,20 @@
     {% block content %}
     {% if user %}
     <h3>Welcome, {{ user.name }}!</h3>
-    <h4><a href="/blog/newpost">add new post</a></h4>
+    <h5><a href="/blog/newpost">add new post</a></h5>
     {% else %}
-    <h3>Welcome! please <a href="/blog/login">sign-in</a> or <a href="/blog/signup">sign-up</a></h3>
+    <h3>Welcome! Please <a href="/blog/login">sign-in</a> or <a href="/blog/signup">sign-up</a></h3>
     {% endif %}
 
     {% for article in articles %}
-    <div class="article">
-      <div class="article-title">
-        <a href="/blog/posts/{{ article.key().id() }}/">{{ article.title }}</a>
+    <div class="panel panel-default article">
+      <div class="panel-heading article-title">
+        <a href="/blog/posts/{{ article.key().id() }}">{{ article.title }}</a>
       </div>
-      <div class="article-body">
-        <pre>{{ article.article }}</pre>
+      <div class="panel-body article-body">
+        <article>{{ article.article }}</article>
       </div>
-      <h4>{{ article.created }}</h4>
+      <p class="small text-right">{{ article.created }}</p>
     </div>
-    <hr>
     {% endfor %}
 {% endblock content %}
