@@ -12,9 +12,6 @@ from google.appengine.ext import db
 SECRET = 'ljwnehgf.,8734tnfyu7wa3Y^*^&^T#%@#(*&^a4H76R6R[]/6595GFYUJG*^%(G$)'
 
 
-#template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-#jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
-#                               autoescape=True)
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'),
                                autoescape=True)
 
@@ -124,6 +121,7 @@ class User(db.Model):
 def articles_key(group='default'):
     return db.Key.from_path('articles', group)
 
+
 class Article(db.Model):
     # Datastore Types:
     # Integer, Float, String, Date, Time, DateTime,
@@ -148,6 +146,7 @@ class Article(db.Model):
 def comments_key(group='default'):
     return db.Key.from_path('comments', group)
 
+
 class Comment(db.Model):
     article = db.IntegerProperty(required=True)
     content = db.TextProperty(required=True)
@@ -158,6 +157,7 @@ class Comment(db.Model):
 
 def likes_key(group='default'):
     return db.Key.from_path('likes', group)
+
 
 class Like(db.Model):
     by_user = db.StringProperty(required=True)
@@ -212,7 +212,8 @@ class NewPost(Handler):
 
         if title and article and creator:
             # article = article.replace('\n', '<br>')
-            a = Article(parent=articles_key(), title=title, article=article, creator=creator)
+            a = Article(parent=articles_key(), title=title, article=article,
+                        creator=creator)
             # TODO: Insert proper paragraphs?
             a.put()
             postid = a.key().id()
@@ -230,9 +231,9 @@ class ViewPost(Handler):
                             " ORDER BY created ASC;".format(postid))
         count = likes.count()
         self.render("post.html", user=user, title=post.title,
-                article=post.article, created=post.created,
-                creator=post.creator, id=postid, likes=count,
-                comments=comments)
+                    article=post.article, created=post.created,
+                    creator=post.creator, id=postid, likes=count,
+                    comments=comments)
 
     def get(self, postid):
         key = db.Key.from_path('Article', int(postid), parent=articles_key())
@@ -248,7 +249,6 @@ class ViewPost(Handler):
                              content="", error="")
         else:
             self.error(404)
-        #self.render_post(postid)
 
     def post(self, postid):
         content = self.request.get("content")
@@ -326,7 +326,8 @@ class DeletePost(Handler):
     def post(self, postid):
         delete = self.request.get("delete")
         if delete == "yes":
-            key = db.Key.from_path('Article', int(postid), parent=articles_key())
+            key = db.Key.from_path('Article', int(postid),
+                                   parent=articles_key())
             post = db.get(key)
             post.delete()
             self.render('deletesuccess.html')
@@ -352,11 +353,13 @@ class LikePost(Handler):
                 count = likes.count()
                 if count < 1:
                     like = Like(parent=likes_key(), by_user=user.name,
-                            liked_user=post.creator, article=int(postid))
+                                liked_user=post.creator, article=int(postid))
                     like.put()
-                    self.render('likesuccess.html', postid=postid, success=True)
+                    self.render('likesuccess.html', postid=postid,
+                                success=True)
                 else:
-                    self.render('likesuccess.html', postid=postid, success=False)
+                    self.render('likesuccess.html', postid=postid,
+                                success=False)
             else:
                 self.redirect("/blog/posts/{}".format(str(postid)))
         else:
@@ -385,9 +388,9 @@ class Signup(Handler):
         self.email = self.request.get("email")
         p = hashlib.md5(self.password).hexdigest()
 
-        params = dict(username = self.username,
-                      email = self.email,
-                      error = "")
+        params = dict(username=self.username,
+                      email=self.email,
+                      error="")
 
         # Password doesn't match Verify
         if not hashlib.md5(self.verify).hexdigest() == p:
@@ -450,9 +453,10 @@ class Logout(Handler):
 class Welcome(Handler):
     def get(self):
         if self.user:
-            articles = db.GqlQuery("SELECT * FROM Article ORDER BY created DESC"
-                                   " LIMIT 10;")
-            self.render('welcome.html', username=self.user.name, articles=articles)
+            articles = db.GqlQuery("SELECT * FROM Article ORDER BY created "
+                                   "DESC LIMIT 10;")
+            self.render('welcome.html', username=self.user.name,
+                        articles=articles)
         else:
             self.redirect('/blog/signup')
 
