@@ -1,7 +1,6 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: win-64
-appengine=1.8.0.2=py27_0
 pip=9.0.1=py27_1
 python=2.7.13=0
 setuptools=27.2.0=py27_1
