@@ -8,7 +8,10 @@ import webapp2
 import jinja2
 from google.appengine.ext import db
 
-# In practice secret should be hidden in an external unpublished module
+# TODO: Clear all TODOs before submission
+# TODO: PEP8 Lint before submission
+
+# In actual practice secret should be hidden in an external unpublished module
 SECRET = 'ljwnehgf.,8734tnfyu7wa3Y^*^&^T#%@#(*&^a4H76R6R[]/6595GFYUJG*^%(G$)'
 
 
@@ -477,6 +480,22 @@ class CommentPost(Handler):
     def get(self, postid):
         self.render('comment.html', postid=postid, success=True)
 
+
+# Edit Comment Page /blog/posts/#/comment/#/edit
+class EditComment(Handler):
+    def get(self, postid, commentid):
+        self.render('editcomment.html', postid=postid, commentid=commentid)
+        # TODO: Create the above HTML template page
+        # TODO: Implement logic to edit Comment by Creator
+
+
+# Delete Comment Page /blog/posts/#/comment/#/delete
+class DeleteComment(Handler):
+    def get(self, postid, commentid):
+        self.render('deletecomment.html' postid=postid, commentid=commentid)
+        # TODO: Create the above HTML template page
+        # TODO: Implement logic to delete Comment by Creator
+
 # URL Routing
 app = webapp2.WSGIApplication([('/blog', MainPage),
                                ('/blog/newpost', NewPost),
@@ -488,6 +507,10 @@ app = webapp2.WSGIApplication([('/blog', MainPage),
                                ('/blog/posts/([0-9]+)/edit', EditPost),
                                ('/blog/posts/([0-9]+)/delete', DeletePost),
                                ('/blog/posts/([0-9]+)/like', LikePost),
-                               ('/blog/posts/([0-9]+)/comment', CommentPost)
+                               ('/blog/posts/([0-9]+)/comment', CommentPost),
+                               ('/blog/posts/([0-9]+)/comment/([0-9]+)/edit',
+                                EditComment),
+                               ('/blog/posts/([0-9]+)/comment/([0-9]+)/delete',
+                                DeleteComment)
                                ],
                               debug=True)

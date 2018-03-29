@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}/tiny blog/{% endblock title %}
+{% block pagetitle %}tiny blog: /delete post/{% endblock pagetitle %}
+    {% block content %}
+    <h4><a href="/blog/newpost">delete post</a></h4>
+
+    <h3>Are you sure you want to delete this blog entry?</h3>
+    <form method="post">
+      <label>
+        <div>yes, I want to delete this entry.</div>
+        <input type="radio" name="delete" value="yes">
+      </label>
+      <label>
+        <div>no, go back.</div>
+        <input type="radio" name="delete" value="no">
+      </label>
+      <input class="btn btn-default" type="submit" value="submit">
+    </form>
+    <hr>
+{% endblock content %}

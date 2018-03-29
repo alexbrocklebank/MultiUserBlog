@@ -42,3 +42,5 @@ Bootstrap 3
 + Ability to select/change the site theme
 + Article search funtion
 + Edit and Delete comments
++ Asynchronous database interaction
++ Single template page for success/failure messages
