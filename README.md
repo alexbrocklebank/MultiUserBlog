@@ -28,13 +28,17 @@ Google App Engine
 Jinja2
 Bootstrap 3
 
-## Site Hierarchy
-+ home
-+ welcome
-+ login
-+ signup
-+ logout
-+ post
-  + editpost
-  + deletepost
-  + addpost
+## Features
++ Secure sign-in with salted and hashed passwords
++ Disallows duplicate users
++ Login/Logout links available when necessary
++ Logged in users can create new blog entries and only edit/delete their own
++ Users cannot like their own posts
++ Users can only like an entry once
++ Templates used to keep site design uniform
++ Bootstrap used for structure and flexibility
+
+## Future Improvements
++ Ability to select/change the site theme
++ Article search funtion
++ Edit and Delete comments
