@@ -15,6 +15,7 @@ SECRET = 'ljwnehgf.,8734tnfyu7wa3Y^*^&^T#%@#(*&^a4H76R6R[]/6595GFYUJG*^%(G$)'
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'),
                                autoescape=True)
 
+
 # Security functions
 def make_secure(s):
     return("{}|{}".format(s, hmac.new(SECRET, s).hexdigest()))
@@ -86,9 +87,11 @@ def render_post(response, post):
     response.out.write('<b>' + post.title + '</b><br>')
     response.out.write(post.article)
 
+
 # Key for Users database
 def users_key(group='default'):
     return db.Key.from_path('users', group)
+
 
 # User database model
 class User(db.Model):
@@ -118,9 +121,11 @@ class User(db.Model):
         if u and valid_pw(name, pw, u.pw_hash):
             return u
 
+
 # Key for Articles table
 def articles_key(group='default'):
     return db.Key.from_path('articles', group)
+
 
 # Articles database model
 class Article(db.Model):
@@ -138,9 +143,11 @@ class Article(db.Model):
     def by_title(cls, title):
         return Article.all().filter('title = ', title).get()
 
+
 # Key for Comments table
 def comments_key(group='default'):
     return db.Key.from_path('comments', group)
+
 
 # Comments database model
 class Comment(db.Model):
@@ -150,9 +157,11 @@ class Comment(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
 
+
 # Key for Likes table
 def likes_key(group='default'):
     return db.Key.from_path('likes', group)
+
 
 # Likes database model
 class Like(db.Model):
@@ -161,6 +170,7 @@ class Like(db.Model):
     article = db.IntegerProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
+
 
 # Main Page /blog
 class MainPage(Handler):
@@ -175,6 +185,7 @@ class MainPage(Handler):
     def get(self):
         self.render_home()
 
+
 # Welcome Page /blog/welcome
 class Welcome(Handler):
     def get(self):
@@ -185,6 +196,7 @@ class Welcome(Handler):
                         articles=articles)
         else:
             self.redirect('/blog/signup')
+
 
 # Signup Page /blog/signup
 class Signup(Handler):
@@ -224,6 +236,7 @@ class Signup(Handler):
     def done(self, *a, **kw):
         raise NotImplementedError
 
+
 # Registration Page /blog/signup Child Class
 class Register(Signup):
     def done(self):
@@ -238,6 +251,7 @@ class Register(Signup):
 
             self.login(user)
             self.redirect('/blog/welcome')
+
 
 # Login Page /blog/login
 class Login(Handler):
@@ -259,11 +273,13 @@ class Login(Handler):
             error = "Invalid User/Password combination.\n"
             self.render_login(username, error)
 
+
 # Logout Page /blog/logout
 class Logout(Handler):
     def get(self):
         self.logout()
         self.redirect('/blog/welcome')
+
 
 # New Post Page /blog/newpost
 class NewPost(Handler):
@@ -307,6 +323,7 @@ class NewPost(Handler):
         else:
             error = "You must include both a Title and an Article!\n"
             self.render_new(title, article, error)
+
 
 # View Post /blog/post/#
 class ViewPost(Handler):
@@ -364,6 +381,7 @@ class ViewPost(Handler):
         self.render_post(postid=postid, user=user, post=post,
                          content=content, error=error)
 
+
 # Edit Post Page /blog/posts/#/edit
 class EditPost(Handler):
     def render_edit(self, postid, title="", article="", error=""):
@@ -404,6 +422,7 @@ class EditPost(Handler):
             self.render_edit(postid=postid, title=title,
                              article=article, error=error)
 
+
 # Delete Post Page /blog/posts/#/delete
 class DeletePost(Handler):
     def get(self, postid):
@@ -419,6 +438,7 @@ class DeletePost(Handler):
             self.render('deletesuccess.html')
         else:
             self.redirect("/blog/posts/{}/edit".format(str(postid)))
+
 
 # Like Post Page /blog/posts/#/like
 class LikePost(Handler):
@@ -450,6 +470,7 @@ class LikePost(Handler):
                 self.redirect("/blog/posts/{}".format(str(postid)))
         else:
             self.redirect("/blog/posts/{}".format(str(postid)))
+
 
 # Comment Post Page /blog/posts/#/comment
 class CommentPost(Handler):
