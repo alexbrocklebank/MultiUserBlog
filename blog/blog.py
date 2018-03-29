@@ -316,7 +316,7 @@ class NewPost(Handler):
             self.render_new(title, article, error)
 
         if title and article and creator:
-            # article = article.replace('\n', '<br>')
+            article = article.replace('\n', '<br>')
             a = Article(parent=articles_key(), title=title, article=article,
                         creator=creator)
             # TODO: Insert proper paragraphs?
@@ -344,6 +344,7 @@ class ViewPost(Handler):
     def get(self, postid):
         key = db.Key.from_path('Article', int(postid), parent=articles_key())
         post = db.get(key)
+        #post.article = post.article.replace('\n', '<br>')
         userid = self.read_secure_cookie('user_id')
         user = False
         if post:
@@ -492,7 +493,7 @@ class EditComment(Handler):
 # Delete Comment Page /blog/posts/#/comment/#/delete
 class DeleteComment(Handler):
     def get(self, postid, commentid):
-        self.render('deletecomment.html' postid=postid, commentid=commentid)
+        self.render('deletecomment.html', postid=postid, commentid=commentid)
         # TODO: Create the above HTML template page
         # TODO: Implement logic to delete Comment by Creator
 
