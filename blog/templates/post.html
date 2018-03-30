@@ -15,8 +15,8 @@
       <div class="panel-body article-body">
         <article>
         {% for line in article.splitlines() %}
-          {{line}}<br>
-        {% endfor %} }}
+          <p>{{line}}</p>
+        {% endfor %}
         </article>
       </div>
       <div>
@@ -61,8 +61,8 @@
       <div class="panel-heading comment-body">
         {{ comment.creator }} says:
       </div>
-      <!-- TODO: Add Edit and Delete buttons when user == creator -->
       <div class="panel-body comment-body">
+          {% if user and user.name == creator %}
           <p class="text-right">
             <a href="">
               <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> edit
@@ -71,7 +71,10 @@
               <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> delete
             </a>
           </p>
-          <p>{{ comment.content }}</p>
+          {% endif %}
+          {% for line in comment.content.splitlines() %}
+            <p>{{line}}</p>
+          {% endfor %}
           <p class="text-right small">{{ comment.created }}</p>
       </div>
     </div>
