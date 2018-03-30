@@ -316,7 +316,7 @@ class NewPost(Handler):
             self.render_new(title, article, error)
 
         if title and article and creator:
-            article = article.replace('\n', '<br>')
+            #article = article.replace('\n', '<br>')
             a = Article(parent=articles_key(), title=title, article=article,
                         creator=creator)
             # TODO: Insert proper paragraphs?

@@ -14,7 +14,11 @@
         <a href="/blog/posts/{{ article.key().id() }}">{{ article.title }}</a>
       </div>
       <div class="panel-body article-body">
-        <article>{{ article.article | safe }}</article>
+        <article>
+          {% for line in article.article.splitlines() %}
+            {{line}}<br>
+          {% endfor %}
+        </article>
       </div>
       <p class="small text-right">{{ article.created }}</p>
     </div>

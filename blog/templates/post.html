@@ -13,7 +13,11 @@
       <p class="small">{{ created }}</p>
 
       <div class="panel-body article-body">
-        <article>{{ article | replace("\n", "<br>") }}</article>
+        <article>
+        {% for line in article.splitlines() %}
+          {{line}}<br>
+        {% endfor %} }}
+        </article>
       </div>
       <div>
           {% if user and user.name != creator %}
