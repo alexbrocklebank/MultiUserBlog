@@ -505,20 +505,22 @@ class EditComment(Handler):
             self.redirect("/blog/posts/{}".format(str(postid)))
         # TODO: Implement logic to edit Comment by Creator
 
-    def post(selfid, postid, commentid):
+    def post(self, postid, commentid):
         key = db.Key.from_path('Comment', int(commentid), parent=comments_key())
         comment = db.get(key)
         content = self.request.get("content")
 
-        if body:
+        if content:
             comment.content = content
             comment.put()
+            # TODO: Create an all-in-one successpage that redirects
+            # to the next page after 5 seconds to allow database to updateself.
+            # Pass in redirect-to URL and the success message.
             self.redirect("/blog/posts/{}".format(str(postid)))
         else:
             error = "You must include content for your comment!\n"
             self.render_edit(postid=postid, commentid=commentid,
                              comment=comment, error=error)
-    # TODO: Test this class.
 
 
 # Delete Comment Page /blog/posts/#/comment/#/delete
@@ -533,11 +535,12 @@ class DeleteComment(Handler):
                                    parent=comments_key())
             comment = db.get(key)
             comment.delete()
-            self.render(deletesuccess.html)
+            self.render('deletesuccess.html')
         else:
             self.redirect("/blog/posts/{}/comment/{}/edit".format(str(postid),
                           str(commentid)))
     # TODO: Test Me
+    # Something funky is going on here...
 
 # URL Routing
 app = webapp2.WSGIApplication([('/blog', MainPage),
