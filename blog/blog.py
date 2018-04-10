@@ -484,18 +484,60 @@ class CommentPost(Handler):
 
 # Edit Comment Page /blog/posts/#/comment/#/edit
 class EditComment(Handler):
+    def render_edit(self, postid, commentid, comment, error=""):
+        self.render('editcomment.html', postid=postid, commentid=commentid,
+                    comment=comment, error=error)
+
     def get(self, postid, commentid):
-        self.render('editcomment.html', postid=postid, commentid=commentid)
-        # TODO: Create the above HTML template page
+        userid = self.read_secure_cookie('user_id')
+        user = False
+        key = db.Key.from_path('Comment', int(commentid), parent=comments_key())
+        comment = db.get(key)
+
+        if userid:
+            userid = int(userid)
+            user = User.by_id(userid)
+
+        if user and comment:
+            self.render_edit(postid=postid, comment=comment,
+                             commentid=commentid,  error="")
+        else:
+            self.redirect("/blog/posts/{}".format(str(postid)))
         # TODO: Implement logic to edit Comment by Creator
+
+    def post(selfid, postid, commentid):
+        key = db.Key.from_path('Comment', int(commentid), parent=comments_key())
+        comment = db.get(key)
+        content = self.request.get("content")
+
+        if body:
+            comment.content = content
+            comment.put()
+            self.redirect("/blog/posts/{}".format(str(postid)))
+        else:
+            error = "You must include content for your comment!\n"
+            self.render_edit(postid=postid, commentid=commentid,
+                             comment=comment, error=error)
+    # TODO: Test this class.
 
 
 # Delete Comment Page /blog/posts/#/comment/#/delete
 class DeleteComment(Handler):
     def get(self, postid, commentid):
         self.render('deletecomment.html', postid=postid, commentid=commentid)
-        # TODO: Create the above HTML template page
-        # TODO: Implement logic to delete Comment by Creator
+
+    def post(self, postid, commentid):
+        delete = self.request.get("delete")
+        if delete == "yes":
+            key = db.Key.from_path('Comment', int(commentid),
+                                   parent=comments_key())
+            comment = db.get(key)
+            comment.delete()
+            self.render(deletesuccess.html)
+        else:
+            self.redirect("/blog/posts/{}/comment/{}/edit".format(str(postid),
+                          str(commentid)))
+    # TODO: Test Me
 
 # URL Routing
 app = webapp2.WSGIApplication([('/blog', MainPage),

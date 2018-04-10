@@ -1,16 +1,12 @@
 {% extends "base.html" %}
-{% block title %}/tiny blog/ : /add new/{% endblock title %}
-{% block pagetitle %}tiny blog : /edit post/{% endblock pagetitle %}
+{% block title %}/tiny blog/ : /edit comment/{% endblock title %}
+{% block pagetitle %}tiny blog : /edit comment/{% endblock pagetitle %}
     {% block content %}
 
     <form method="post">
       <label>
-        <div>title</div>
-        <input class="form-control" type="text" name="subject" value="{{ title }}">
-      </label>
-      <label>
-        <div>article</div>
-        <textarea class="form-control" name="content">{{ article }}</textarea>
+        <div>comment</div>
+        <textarea class="form-control" name="content">{{ comment.content }}</textarea>
       </label>
       <div class="error">
         {% if error %}
@@ -23,6 +19,6 @@
       </div>
       <input class="btn btn-default" type="submit" value="submit">
       <a href="/blog/posts/{{ postid }}">cancel</a>
-      <a href="/blog/posts/{{ postid }}/delete">delete</a>
+      <a href="/blog/posts/{{ postid }}/comment/{{ commentid }}/delete">delete</a>
     </form>
 {% endblock content %}
