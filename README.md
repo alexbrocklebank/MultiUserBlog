@@ -41,7 +41,7 @@ Bootstrap 3
 ## Future Improvements
 + Ability to select/change the site theme
 + Article search function
-+ Edit and Delete comments
 + Asynchronous database interaction
 + Single template page for success/failure messages
 + Limit article and comment length and when too long, allow for manually expanding
++ Better pagination of comments and posts
