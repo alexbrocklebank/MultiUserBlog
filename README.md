@@ -35,6 +35,7 @@ Bootstrap 3
 + Logged in users can create new blog entries and only edit/delete their own
 + Users cannot like their own posts
 + Users can only like an entry once
++ Users can edit/delete comments they made
 + Templates used to keep site design uniform
 + Bootstrap used for structure and flexibility
 
