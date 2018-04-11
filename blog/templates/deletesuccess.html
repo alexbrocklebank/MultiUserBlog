@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block meta %}<meta http-equiv="refresh" content="5;url='/blog'">{% endblock meta %}
+{% block meta %}<meta http-equiv="refresh" content="5;url='{{ redirecturl }}'">{% endblock meta %}
 {% block title %}/tiny blog/{% endblock title %}
-{% block pagetitle %}tiny blog: /delete post/{% endblock pagetitle %}
+{% block pagetitle %}tiny blog: /delete/{% endblock pagetitle %}
     {% block content %}
 
-    <h3>Entry successfully deleted.  Redirecting back to homepage...</h3>
+    <h3>{{ message }}</h3>
 
     <hr>
 {% endblock content %}

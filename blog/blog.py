@@ -438,8 +438,10 @@ class DeletePost(Handler):
             key = db.Key.from_path('Article', int(postid),
                                    parent=articles_key())
             post = db.get(key)
+            message = "Entry successfully deleted.  Redirecting back to homepage..."
             post.delete()
-            self.render('deletesuccess.html')
+            self.render('deletesuccess.html', redirecturl="/blog",
+                        message=message)
         else:
             self.redirect("/blog/posts/{}/edit".format(str(postid)))
 
@@ -534,13 +536,15 @@ class DeleteComment(Handler):
             key = db.Key.from_path('Comment', int(commentid),
                                    parent=comments_key())
             comment = db.get(key)
+            message = "Entry successfully deleted.  Redirecting back to post..."
             comment.delete()
-            self.render('deletesuccess.html')
+            self.render('deletesuccess.html',
+                        redirecturl="/blog/posts/{}".format(postid),
+                        message=message)
         else:
             self.redirect("/blog/posts/{}/comment/{}/edit".format(str(postid),
                           str(commentid)))
-    # TODO: Test Me
-    # Something funky is going on here...
+
 
 # URL Routing
 app = webapp2.WSGIApplication([('/blog', MainPage),
