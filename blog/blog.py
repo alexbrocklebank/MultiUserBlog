@@ -8,8 +8,6 @@ import webapp2
 import jinja2
 from google.appengine.ext import db
 
-# TODO: Clear all TODOs before submission
-# TODO: PEP8 Lint before submission
 
 # In actual practice secret should be hidden in an external unpublished module
 SECRET = 'ljwnehgf.,8734tnfyu7wa3Y^*^&^T#%@#(*&^a4H76R6R[]/6595GFYUJG*^%(G$)'
@@ -316,10 +314,8 @@ class NewPost(Handler):
             self.render_new(title, article, error)
 
         if title and article and creator:
-            #article = article.replace('\n', '<br>')
             a = Article(parent=articles_key(), title=title, article=article,
                         creator=creator)
-            # TODO: Insert proper paragraphs?
             a.put()
             postid = a.key().id()
             self.redirect("/blog/posts/{}".format(str(postid)))
@@ -344,7 +340,6 @@ class ViewPost(Handler):
     def get(self, postid):
         key = db.Key.from_path('Article', int(postid), parent=articles_key())
         post = db.get(key)
-        #post.article = post.article.replace('\n', '<br>')
         userid = self.read_secure_cookie('user_id')
         user = False
         if post:
@@ -415,10 +410,8 @@ class EditPost(Handler):
         article = self.request.get("content")
 
         if title and article:
-            # article = article.replace('\n', '<br>')
             post.title = title
             post.article = article
-            # TODO: Insert proper paragraphs?
             post.put()
             self.redirect("/blog/posts/{}".format(str(postid)))
         else:
@@ -438,7 +431,8 @@ class DeletePost(Handler):
             key = db.Key.from_path('Article', int(postid),
                                    parent=articles_key())
             post = db.get(key)
-            message = "Entry successfully deleted.  Redirecting back to homepage..."
+            message = "Entry successfully deleted.  "\
+                "Redirecting back to homepage..."
             post.delete()
             self.render('deletesuccess.html', redirecturl="/blog",
                         message=message)
@@ -493,7 +487,8 @@ class EditComment(Handler):
     def get(self, postid, commentid):
         userid = self.read_secure_cookie('user_id')
         user = False
-        key = db.Key.from_path('Comment', int(commentid), parent=comments_key())
+        key = db.Key.from_path('Comment', int(commentid),
+                               parent=comments_key())
         comment = db.get(key)
 
         if userid:
@@ -505,10 +500,10 @@ class EditComment(Handler):
                              commentid=commentid,  error="")
         else:
             self.redirect("/blog/posts/{}".format(str(postid)))
-        # TODO: Implement logic to edit Comment by Creator
 
     def post(self, postid, commentid):
-        key = db.Key.from_path('Comment', int(commentid), parent=comments_key())
+        key = db.Key.from_path('Comment', int(commentid),
+                               parent=comments_key())
         comment = db.get(key)
         content = self.request.get("content")
 
@@ -536,7 +531,8 @@ class DeleteComment(Handler):
             key = db.Key.from_path('Comment', int(commentid),
                                    parent=comments_key())
             comment = db.get(key)
-            message = "Entry successfully deleted.  Redirecting back to post..."
+            message = "Entry successfully deleted.  "\
+                "Redirecting back to post..."
             comment.delete()
             self.render('deletesuccess.html',
                         redirecturl="/blog/posts/{}".format(postid),
